@@ -2,6 +2,7 @@ import sys
 import logging
 import argparse
 import asyncio
+import json
 
 from xbox.webapi.authentication.manager import AuthenticationManager
 
@@ -21,6 +22,10 @@ async def async_main():
     parser = argparse.ArgumentParser(description="Basic smartglass NANO client")
     parser.add_argument('--address', '-a',
                         help="IP address of console")
+    parser.add_argument('--user', '-u',
+                        help="user hash")
+    parser.add_argument('--token' , '-t',
+                        help="xsts token")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.DEBUG)
@@ -32,7 +37,7 @@ async def async_main():
         console.add_manager(NanoManager)
         console.nano.on_gamestream_error += on_gamestream_error
 
-        await console.connect("", "")
+        await console.connect(args.user, args.token)
         if console.connection_state != ConnectionState.Connected:
             print("Connection failed")
             sys.exit(1)
